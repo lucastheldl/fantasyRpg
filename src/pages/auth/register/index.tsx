@@ -36,7 +36,11 @@ export default function Register() {
   });
 
   async function handleRegister(data: RegisterInput) {
-    const { result, error } = await signUp(data.email, data.password);
+    const { result, error } = await signUp(
+      data.email,
+      data.password,
+      data.username
+    );
 
     if (error) {
       return console.log(error);
