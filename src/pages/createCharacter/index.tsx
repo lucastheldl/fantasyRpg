@@ -1,6 +1,6 @@
 "use client";
 import { AuthContext } from "@/context/AuthContext";
-import { CharacterContext } from "@/context/CharacterContext";
+import { GameContext } from "@/context/GameContext";
 import { db } from "@/firebase/config";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -37,7 +37,7 @@ export default function CreateCharacter() {
     resolver: zodResolver(CharacterSchhema),
   });
   const { user } = useContext(AuthContext);
-  const { setNewCharacter } = useContext(CharacterContext);
+  const { setNewCharacter } = useContext(GameContext);
 
   async function handleCreateCharacter(data: CharacterInput) {
     const userDocRef = doc(db, "users", user!.uid);
@@ -51,7 +51,8 @@ export default function CreateCharacter() {
       inteligence: data.int,
       star: "fnmV3ob97CjOlbcLkddk",
       planet: 0,
-      city: 1,
+      satelite: 500,
+      planetLocation: 1,
     };
     setNewCharacter(character);
 

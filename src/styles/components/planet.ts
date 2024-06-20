@@ -22,7 +22,9 @@ export const PlanetContainer = styled("button", {
   border: "2px solid white",
   background: "$green300",
 
-  cursor: "pointer",
+  "&:not(:disabled)": {
+    cursor: "pointer",
+  },
   variants: {
     orbit: {
       display: {
@@ -63,6 +65,23 @@ export const StarContainer = styled("div", {
   borderRadius: "100%",
   border: "3px solid orange",
   background: "red",
+  "&:hover": {
+    cursor: "pointer",
+  },
+});
+export const Destination = styled("div", {
+  width: "20px",
+  height: "20px",
+  borderRadius: "100%",
+  border: "3px solid orange",
+  background: "orange",
 
   cursor: "pointer",
+  variants: {
+    type: {
+      star: {
+        background: "$yellow",
+      },
+    },
+  },
 });

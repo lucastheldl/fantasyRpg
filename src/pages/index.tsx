@@ -6,20 +6,53 @@ import { GameContext } from "@/context/GameContext";
 import { db } from "@/firebase/config";
 import { doc, getDoc } from "firebase/firestore";
 import { AuthContext } from "@/context/AuthContext";
-import { PlanetContainer, StarContainer } from "@/styles/components/planet";
-import { Container, Orbit, Wrapper } from "@/styles/home";
-import { title } from "process";
+import {
+  Destination,
+  PlanetContainer,
+  StarContainer,
+} from "@/styles/components/planet";
+import { AsideDestination, Container, Orbit, Wrapper } from "@/styles/home";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   const { user } = useContext(AuthContext);
-  const { character, setNewCharacter } = useContext(GameContext);
-  const [location, setLocation] = useState<any | null>(null);
+  const {
+    character,
+    setNewCharacter,
+    leavePlanet,
+    location,
+    goToPlanet,
+    updateLocation,
+    goToSatelite,
+    leaveSatelite,
+  } = useContext(GameContext);
+  //const [location, setLocation] = useState<any | null>(null);
   const [inPlanet, setInPlanet] = useState<any | null>(null);
+  const [inSatelite, setInSatelite] = useState<any | null>(null);
+  const [inPlanetLocation, setInPlanetLocation] = useState<any | null>(null);
 
-  function handleGoToPlanet(p: any) {
+  function handleGoToPlanet(p: any, i: number) {
+    goToPlanet(i);
     setInPlanet(p);
+  }
+  function handleGoToSatelite(m: any, i: number) {
+    goToSatelite(i);
+    setInSatelite(m);
+  }
+  function handleLeaveLocation() {
+    if (inPlanetLocation) {
+      //setInSatelite(null);
+      //leaveSatelite();
+      return;
+    }
+    if (inSatelite) {
+      setInSatelite(null);
+      leaveSatelite();
+      return;
+    }
+    leavePlanet();
+    setInPlanet(null);
   }
 
   useEffect(() => {
@@ -48,12 +81,23 @@ export default function Home() {
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
-        setLocation(docSnap.data());
+        updateLocation(docSnap.data());
+        if (character.planet != 500) {
+          setInPlanet(docSnap.data().planets[character.planet]);
+        }
+        if (character.satelite && character.satelite != 500) {
+          setInSatelite(
+            docSnap.data().planets[character.planet].satelites[
+              character.satelite
+            ]
+          );
+        }
       } else {
       }
     }
     getCharPos();
   }, [character]);
+
   return (
     <>
       <Head>
@@ -64,50 +108,53 @@ export default function Home() {
       </Head>
       <Wrapper>
         {!inPlanet ? (
-          <Container>
-            {location && character && (
-              <p>
-                {character.planet == 500
-                  ? location.name
-                  : character.city == 500
-                  ? location.planets[character.planet].name
-                  : location.planets[character.planet].cities[character.city]
-                      .name}
-              </p>
-            )}
-            <Orbit>
-              {location && <StarContainer title={location.name} />}
-              {location &&
-                location.planets.map((p: any, i: number) => {
+          <>
+            <AsideDestination>
+              <Destination type={"star"} />
+            </AsideDestination>
+            <Container>
+              <Orbit>
+                {location && <StarContainer title={location.name} />}
+                {location &&
+                  location.planets.map((p: any, i: number) => {
+                    return (
+                      <PlanetContainer
+                        onClick={() => handleGoToPlanet(p, i)}
+                        key={i}
+                        title={p.name}
+                        orbit={p.orbit}
+                      />
+                    );
+                  })}
+              </Orbit>
+            </Container>
+            <AsideDestination></AsideDestination>
+          </>
+        ) : (
+          <>
+            <Container>
+              <PlanetContainer
+                title={!inSatelite ? inPlanet.name : inSatelite.name}
+                orbit={"display"}
+                disabled={true}
+              />
+              {!inSatelite &&
+                inPlanet.satelites &&
+                inPlanet.satelites.lenght != 0 &&
+                inPlanet.satelites.map((m: any, i: number) => {
                   return (
                     <PlanetContainer
-                      onClick={() => handleGoToPlanet(p)}
+                      onClick={() => handleGoToSatelite(m, i)}
                       key={i}
-                      title={p.name}
-                      orbit={p.orbit}
+                      title={m.name}
+                      orbit={"lg"}
+                      color={"gray"}
                     />
                   );
                 })}
-            </Orbit>
-          </Container>
-        ) : (
-          <Container>
-            <PlanetContainer title={inPlanet.name} orbit={"display"} />
-            {inPlanet.satelites &&
-              inPlanet.satelites.lenght != 0 &&
-              inPlanet.satelites.map((m: any, i: number) => {
-                console.log(m);
-                return (
-                  <PlanetContainer
-                    onClick={() => handleGoToPlanet(m)}
-                    key={i}
-                    title={m.name}
-                    orbit={"lg"}
-                    color={"gray"}
-                  />
-                );
-              })}
-          </Container>
+              <button onClick={handleLeaveLocation}>🚀</button>
+            </Container>
+          </>
         )}
       </Wrapper>
     </>
