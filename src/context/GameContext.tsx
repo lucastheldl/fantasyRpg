@@ -30,6 +30,7 @@ interface GameContextType {
   updateLocation: (location: any) => void;
   goToPlanet: (planetIndex: number) => void;
   goToSatelite: (sateliteIndex: number) => void;
+  goToStar: (id: string) => void;
 }
 
 export const GameContext = createContext({} as GameContextType);
@@ -57,7 +58,29 @@ export function GameContextProvider({ children }: GameContextProviderProps) {
     setLocation(location);
   }
 
-  async function goToStar() {}
+  async function goToStar(id: string) {
+    if (!character) {
+      console.log("No character found");
+      return;
+    }
+    if (id == "") {
+      return;
+    }
+    const userDocRef = doc(db, "users", user!.uid);
+
+    const userDocSnapshot = await getDoc(userDocRef);
+
+    if (userDocSnapshot.exists()) {
+      // Document exists, update the chat
+      const userDocRef = doc(db, `users/${user!.uid}`);
+
+      const result = await updateDoc(userDocRef, {
+        "character.star": id,
+      });
+    }
+    const updatedCharacter = { ...character, star: id };
+    setCharacter(updatedCharacter);
+  }
 
   async function goToPlanet(planetIndex: number) {
     if (!character) {
@@ -160,6 +183,7 @@ export function GameContextProvider({ children }: GameContextProviderProps) {
         goToPlanet,
         goToSatelite,
         leaveSatelite,
+        goToStar,
       }}
     >
       {loading ? <div>Carregando personagem...</div> : children}

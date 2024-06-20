@@ -17,14 +17,17 @@ export const Orbit = styled("div", {
   width: "200px",
   margin: "10rem auto",
 });
-export const AsideDestination = styled("div", {
+export const AsideDestination = styled("button", {
   display: "flex",
   alignItems: "center",
   height: "100%",
 
   padding: "1rem",
+  border: "none",
+  background: "transparent",
 
+  transition: "all 0.2s",
   "&:hover": {
-    backgroundColor: "linear-gradient(to right, white, transparent)",
+    background: "$gray800",
   },
 });

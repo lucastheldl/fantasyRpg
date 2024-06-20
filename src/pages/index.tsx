@@ -12,6 +12,7 @@ import {
   StarContainer,
 } from "@/styles/components/planet";
 import { AsideDestination, Container, Orbit, Wrapper } from "@/styles/home";
+import { generateStarSystem } from "@/utils/create-star-system";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,6 +27,7 @@ export default function Home() {
     updateLocation,
     goToSatelite,
     leaveSatelite,
+    goToStar,
   } = useContext(GameContext);
   //const [location, setLocation] = useState<any | null>(null);
   const [inPlanet, setInPlanet] = useState<any | null>(null);
@@ -109,9 +111,16 @@ export default function Home() {
       <Wrapper>
         {!inPlanet ? (
           <>
-            <AsideDestination>
-              <Destination type={"star"} />
-            </AsideDestination>
+            {location &&
+              location.leftDestination &&
+              location.leftDestination != "" && (
+                <AsideDestination
+                  onClick={() => goToStar(location.leftDestination)}
+                >
+                  <Destination type={"star"} />
+                </AsideDestination>
+              )}
+            {/* <button onClick={generateStarSystem}>⭐</button> */}
             <Container>
               <Orbit>
                 {location && <StarContainer title={location.name} />}
@@ -123,12 +132,21 @@ export default function Home() {
                         key={i}
                         title={p.name}
                         orbit={p.orbit}
+                        type={p.type ? p.type : "rock"}
                       />
                     );
                   })}
               </Orbit>
             </Container>
-            <AsideDestination></AsideDestination>
+            {location &&
+              location.rightDestination &&
+              location.rightDestination != "" && (
+                <AsideDestination
+                  onClick={() => goToStar(location.rightDestination)}
+                >
+                  <Destination type={"star"} />
+                </AsideDestination>
+              )}
           </>
         ) : (
           <>
@@ -137,6 +155,7 @@ export default function Home() {
                 title={!inSatelite ? inPlanet.name : inSatelite.name}
                 orbit={"display"}
                 disabled={true}
+                type={inPlanet.type ? inPlanet.type : "rock"}
               />
               {!inSatelite &&
                 inPlanet.satelites &&
@@ -149,6 +168,7 @@ export default function Home() {
                       title={m.name}
                       orbit={"lg"}
                       color={"gray"}
+                      type={m.type ? m.type : "rock"}
                     />
                   );
                 })}

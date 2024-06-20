@@ -20,7 +20,6 @@ export const PlanetContainer = styled("button", {
 
   borderRadius: "100%",
   border: "2px solid white",
-  background: "$green300",
 
   "&:not(:disabled)": {
     cursor: "pointer",
@@ -56,6 +55,26 @@ export const PlanetContainer = styled("button", {
         background: "$gray300",
       },
     },
+    type: {
+      rock: {
+        background: "brown",
+      },
+      fire: {
+        background: "DarkRed",
+      },
+      ice: {
+        background: "Cyan",
+      },
+      liquid: {
+        background: "blue",
+      },
+      gas: {
+        background: "YellowGreen",
+      },
+      vegetation: {
+        background: "$green300",
+      },
+    },
   },
 });
 
@@ -67,6 +86,9 @@ export const StarContainer = styled("div", {
   background: "red",
   "&:hover": {
     cursor: "pointer",
+  },
+  variants: {
+    type: {},
   },
 });
 export const Destination = styled("div", {
